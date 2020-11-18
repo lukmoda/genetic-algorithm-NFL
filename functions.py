@@ -81,10 +81,10 @@ def overall_strategy(individual, idxs):
     - Elite QB: Best QB on roster has weight 10;
     - Playmakers: Best QB has weight 5 and best HB, TE and top 3 WR 
                     have weight 8;
-    - Defense: Top 4 DL, top 3 LB and top 4 DB have weight 8;
-    - Trenches: Top 2 G, top 2 T, top 4 DL and best C have weight 8;
-    - Starters: Best QB, HB, TE, C and top 2 G, top 2 T, top 3 WR, top 4 DL, 
-                    top 3 LB and top 4 DB have weight 8.
+    - Defense: Top 4 DL, top 3 LB and top 4 DB have weight 5;
+    - Trenches: Top 2 G, top 2 T, top 4 DL and best C have weight 5;
+    - Starters: Best HB, TE, C and top 2 G, top 2 T, top 3 WR, top 4 DL, 
+                    top 3 LB and top 4 DB have weight 5. Best QB has weight 8.
     """
     if individual.strategy == 'Balanced':
         return np.mean([individual.ratings[i] for i in idxs])

@@ -4,14 +4,14 @@ from tqdm import tqdm
 from classes.ga import GA
 from functions import preproc, get_players, save_results
 from conf import *
+import time
     
 df, positions, ratings, salaries, N_PLAYERS = preproc()
 best_grades = []
 
-for i in tqdm(range(3)):
+for i in tqdm(range(100)):
     ga = GA(POPULATION_SIZE)
     result = ga.fit(MUTATION_RATE, MUTATION_POWER, NUM_GENERATIONS, N_PLAYERS, ROSTER_SPACE, CAP_SPACE, STRATEGY, positions, ratings, salaries, verbose=False)
-
     best_grades.append(np.max(ga.solutions_list))
     df_result = get_players(df, result)
     save_results(df_result, '{}_{}.csv'.format(STRATEGY, i+1), 
