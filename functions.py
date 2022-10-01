@@ -11,7 +11,7 @@ def preproc():
     Return cleansed DataFrame, positions, ratings and salaries arrays
     and number of players in the database.
     """
-    df_players = pd.read_csv('input/M21_Ratings.csv')[['Name', 'position', 'team', 'age', 
+    df_players = pd.read_csv('input/M21_Ratings_Custom.csv')[['Name', 'position', 'team', 'age', 
                             'overall_rating']]
     df_contracts = pd.read_csv('input/NFL_Contracts.csv')[['Player', 'Team', 'Avg/Year']]
     

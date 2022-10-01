@@ -1,7 +1,7 @@
-import numpy as np
-import pandas as pd
 import os
 import glob
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud
@@ -66,7 +66,7 @@ plt.show()
 # Top 30 Players
 top_players = df_tren['Name'].str.replace('\s+', '_').value_counts()[:30]
 players = [pl+' ' for pl in top_players.index]
-values = [pl for pl in top_players]
+values = list(top_players)
 text_list = []
 for p,v in zip(players, values):
     text_list.append(p*v)
@@ -79,7 +79,7 @@ plt.show()
 
 # Top 10 starting QBs
 qbs = []
-for file in balanced:
+for file in defense:
     dd = pd.read_csv(file)
     dd.loc[dd['position'] == 'QB', 'Name'] = dd.loc[dd['position'] == 'QB', 'Name'].str.replace('\s+', '_')
     qbs.append(dd[dd['position'] == 'QB'].sort_values(by='overall_rating', ascending=False).reset_index().loc[0, 'Name'])
@@ -98,7 +98,7 @@ ovr_off = []
 ovr_start = []
 ages = []
 
-for file in trenches:
+for file in balanced:
     dd = pd.read_csv('output/{}'.format(file))    
     rat_def = []
     rat_off = []
@@ -120,14 +120,14 @@ for file in trenches:
     ovr_start.append(np.mean(np.concatenate([rat_def, rat_off])))
     ages.append(dd['age'].mean())
     
-ovr_strat = pd.read_csv('output/Trenches_grades.csv', header=None).values.reshape(-1)
+ovr_strat = pd.read_csv('output/Balanced_grades.csv', header=None).values.reshape(-1)
 d = {'Ovr_Strategy': ovr_strat, 'Ovr_Starters': ovr_start, 'Ovr_Balanced': ovr_gen, 
      'Ovr_Offense': ovr_off, 'Ovr_Defense': ovr_def, 'Avg_Age': ages}
 
-pd.DataFrame(d).to_csv('analysis/overall_trenches.csv', index=False)
+pd.DataFrame(d).to_csv('analysis/overall_balanced.csv', index=False)
 
 # Compare Overalls
-df_ovr = pd.read_csv('analysis/overall_defense.csv')
+df_ovr = pd.read_csv('analysis/overall_starters.csv')
 
 corr = df_ovr.corr()
 plt.figure(figsize=(12,8))
@@ -155,6 +155,20 @@ plt.scatter(df_ovr.index, df_ovr['Ovr_Starters'], color='black', marker='P', lab
 plt.plot(df_ovr['Ovr_Starters'], color='black')
 plt.scatter(df_ovr.index, df_ovr['Ovr_Balanced'], color='cyan', marker='D', label='Balanced')
 plt.plot(df_ovr['Ovr_Balanced'], color='cyan')
+plt.legend(loc='best')
+plt.show()
+
+# Overalls per Strategy
+plt.figure(figsize=(16,12))
+plt.xlabel('Overall')
+plt.ylabel('Density')
+plt.title('Balanced Overall Distribution per Strategy')
+sns.distplot(ovr_bal_starters, hist=False, color='black', label='Starters', kde_kws={'linewidth': 3})
+sns.distplot(ovr_bal_elite, hist=False, color='red', label='Elite QB', kde_kws={'linewidth': 3})
+sns.distplot(ovr_bal_play, hist=False, color='yellow', label='Playmakers', kde_kws={'linewidth': 3})
+sns.distplot(ovr_bal_defense, hist=False, color='blue', label='Defense', kde_kws={'linewidth': 3})
+sns.distplot(ovr_bal_tren, hist=False, color='green', label='Trenches', kde_kws={'linewidth': 3})
+sns.distplot(ovr_bal_balanced, hist=False, color='cyan', label='Balanced', kde_kws={'linewidth': 3})
 plt.legend(loc='best')
 plt.show()
 
@@ -239,9 +253,9 @@ def print_starters(file):
     
     if len(others) > 0:
         ot = list(np.array([[d, c] for d, c in zip(others, others_rt)]).reshape(-1))
-        for index, item in enumerate(ot): 
+        for index, _ in enumerate(ot): 
             if index % 2 == 1: 
                 ot[index] = '({})'.format(ot[index])
         print('\nOthers: {}'.format(' '.join(ot)))
     
-print_starters('output/Starters_82.csv')
+print_starters('output/Starters_99.csv')
